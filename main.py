@@ -19,7 +19,7 @@ import time
 # For the token, access this:
 #   https://trello.com/1/authorize?response_type=token&expiration=30days&name=gui&key=REPLACE_WITH_YOUR_KEY
 API_KEY = '515adc1d50167dd117b1cdcb6c5fee72'
-API_TOKEN = 'cc314c12858a9fda728f73ab5d9fb9746905774a1992e62eb1f1547af1b99ecd'
+API_TOKEN = '3d22d2fde8bfb1f2b4e326a17609ba4d52ee4f14cf28515ea4c43584a64393db'
 
 # Your Board ID
 BOARD_ID = 'gobanyan'
@@ -41,8 +41,14 @@ if __name__ == '__main__':
     theFile = openpyxl.load_workbook('template.xlsx')
     currentSheet = theFile['Sheet1']
     currentSheet['A1'].value = sprint.upper()
+    try:
+        cards = requests.get('https://trello.com/1/lists/%s/cards' % DONE_LIST_ID, params={'key': API_KEY, 'token': API_TOKEN}).json()
+    except Exception as e:
+        print("Oops!", e.__class__, "occurred.")
+        print("Please run https://trello.com/1/authorize?response_type=token&expiration=30days&name=gui&key="
+              "515adc1d50167dd117b1cdcb6c5fee72 to get new key and update in the application")
+        exit(1)
 
-    cards = requests.get('https://trello.com/1/lists/%s/cards' % DONE_LIST_ID, params={'key': API_KEY, 'token': API_TOKEN}).json()
     for card in cards:
         print(card['name'])
         cell_name = "{}{}".format('A', stt + 3)
